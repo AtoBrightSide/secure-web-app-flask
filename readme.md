@@ -22,7 +22,7 @@
     - UPLOAD_FOLDER
     - RECAPTCHA_PUBLIC_KEY
     - RECAPTCHA_PRIVATE_KEY
- 
+ - The variables prefixed `ADMIN` are for the moderator, `MAIL` are configurations for email verification, and the last two prefixed with `RECAPTCHA` are for recaptcha purposes.
  - You can set environment variables in two ways;
  - Inside the terminal, as follows
             
