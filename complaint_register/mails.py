@@ -16,18 +16,14 @@ def generate_verification_token():
     return token
 
 def send_verification_email(user):
-    try:
-        verification_url = f"{request.host_url}verify_email/{user.verification_token}"
+    verification_url = f"{request.host_url}verify_email/{user.verification_token}"
 
-        subject = "Email Verification"
-        sender = os.environ.get('MAIL_DEFAULT_SENDER')
-        recipient = user.email
-        body = f"Hello {user.username},\n\nPlease click the link below to verify your email address:\n{verification_url}\n\nIf you did not request this verification, please ignore this email.\n\nBest regards,\nThe YourApp Team"
+    subject = "Email Verification"
+    sender = os.environ.get('MAIL_DEFAULT_SENDER')
+    recipient = user.email
+    body = f"Hello {user.username},\n\nPlease click the link below to verify your email address:\n{verification_url}\n\nIf you did not request this verification, please ignore this email.\n\nBest regards,\nThe YourApp Team"
 
-        msg = Message(subject=subject, sender=sender, recipients=[recipient])
-        msg.body = body
+    msg = Message(subject=subject, sender=sender, recipients=[recipient])
+    msg.body = body
 
-        mail.send(msg)
-    except Exception as e:
-        # Handle the exception
-        raise VerificationEmailError(e)
+    mail.send(msg)

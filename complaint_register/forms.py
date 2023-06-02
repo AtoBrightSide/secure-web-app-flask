@@ -35,7 +35,6 @@ class RegistrationForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     username = StringField('Username', validators=[DataRequired()])
     honeypot = StringField('HoneyPot')
-    captcha = RecaptchaField()
     password = PasswordField('Password', validators=[DataRequired(), Length(min=6), Regexp(
         r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).*$',
         message="Password must contain at least one uppercase letter, one lowercase letter, and one digit"
@@ -50,10 +49,7 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('Email already registered.')
 
     def create_user(self):
-        try:
-            token = generate_verification_token()
-        except ValueError as e:
-            raise ValueError(e)
+        token = generate_verification_token()
         user = User(
             username=self.username.data,
             email=self.email.data,
@@ -62,33 +58,26 @@ class RegistrationForm(FlaskForm):
         )
         db.session.add(user)
         db.session.commit()
-
-        send_verification_email(user)
-
-
-class FileSizeValidator:
-    def __init__(self, max_size):
-        self.max_size = max_size
-
-    def __call__(self, form, field):
-        if field.data and field.data.content_length > self.max_size:
-            raise ValidationError('File size exceeds the maximum limit.')
+        try:
+            send_verification_email(user)
+        except Exception as e:
+            raise Exception(e)
 
 
-def validate_file_size(field):
-    max_size = 10 * 1024 * 1024  # 10 MB
-    print(f"this is the file: {field.data}")
-    print(f"this is the file: {field.content_length}")
-    if field.data and field.data.content_length > max_size:
-        raise ValidationError('File size exceeds the allowed limit.')
 
+
+
+from flask_wtf.file import FileAllowed
 
 class ComplaintForm(FlaskForm):
     user_id = StringField('User ID', render_kw={'readonly': True})
     complaint = StringField('Comment', validators=[DataRequired()])
-    recaptcha = RecaptchaField()
-    file = FileField(label='File (PDF)', validators=[
-                     FileAllowed(['pdf'])])
+    file = FileField(label='File (PDF)', validators=[FileAllowed(['pdf'])])
+
+    def validate_file(self, file):
+        max_size = 5 * 1024 * 1024  # 5 MB
+        if file.data and file.data.content_length > max_size:
+            raise ValidationError('File size exceeds the allowed limit.')
 
     def post_complaint(self):
         new_complaint = Complaint(
@@ -98,7 +87,6 @@ class ComplaintForm(FlaskForm):
         )
 
         if self.file.data:
-            validate_file_size(self.file)
             filename = str(uuid.uuid4()) + '_' + \
                 secure_filename(self.file.data.filename)
             file_path = os.path.join(
@@ -108,6 +96,7 @@ class ComplaintForm(FlaskForm):
 
         db.session.add(new_complaint)
         db.session.commit()
+
 
 
 class DeactivateUserForm(FlaskForm):
