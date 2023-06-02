@@ -6,16 +6,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your App</title>
     <!-- Include your CSS and JavaScript files -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <style>
+        .flash-messages {
+            list-style-type: none;
+            padding: 0;
+            text-align: center;
+        }
+
+        .flash-messages li {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        text-align: center;
+        background-color: #f8f9fa;
+        padding: 10px 0;
+    }
+    </style>
 </head>
 
 <body>
     <!-- Navigation menu -->
     <nav>
-        <ul>
-            <li><a href="{{ url_for('complaint_blueprint.complaint') }}">Home</a></li>
-            <li><a href="{{ url_for('auth_blueprint.login') }}">Login</a></li>
-            <li><a href="{{ url_for('auth_blueprint.signup') }}">Sign Up</a></li>
-            <li><a href="{{ url_for('auth_blueprint.logout') }}">Logout</a></li>
+        <ul class="nav">
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('complaint_blueprint.complaint') }}">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('auth_blueprint.login') }}">Login</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('auth_blueprint.signup') }}">Sign Up</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('auth_blueprint.logout') }}">Logout</a>
+            </li>
         </ul>
     </nav>
 
@@ -35,7 +67,7 @@
                 for (var i = 0; i < flashMessages.length; i++) {
                     flashMessages[i].remove();
                 }
-            }, 3000); // 5000 milliseconds = 5 seconds
+            }, 5000); // 5000 milliseconds = 5 seconds
         </script>
         {% endif %}
         {% endwith %}
@@ -44,8 +76,11 @@
 
     <!-- Footer -->
     <footer>
-        &copy; {{ current_year }} Your App
+        &copy; {{ current_year }} Secure App
     </footer>
+
+    <!-- Include Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 </body>
 
 </html>

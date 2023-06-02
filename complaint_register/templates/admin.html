@@ -2,7 +2,7 @@
 
 {% block content %}
 <h1>Moderator Dashboard</h1>
-<table>
+<table class="table">
     <thead>
         <tr>
             <th>User ID</th>
@@ -29,9 +29,9 @@
                 <form action="{{ url_for('admin_blueprint.toggle_user_status', user_id=user.user_id) }}" method="post">
                     {{ form.csrf_token }}
                     {% if user.admin %}
-                    <button type="submit" disabled>Toggle User Status</button>
+                    <button class="btn btn-secondary" type="submit" disabled>Toggle User Status</button>
                     {% else %}
-                    <button type="submit">Toggle User Status</button>
+                    <button class="btn btn-primary" type="submit">Toggle User Status</button>
                     {% endif %}
                 </form>
             </td>

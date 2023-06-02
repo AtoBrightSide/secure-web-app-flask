@@ -37,14 +37,7 @@
         {% endfor %}
     </ul>
     {% endif %}
-    {{ form.captcha.label }} {{ form.captcha }}
-    {% if form.captcha.errors %}
-    <ul class="errors">
-        {% for error in form.captcha.errors %}
-        <li>{{ error }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
+    
     <input type="text" name="honeypot" style="display: none;" />
     <button type="submit" class="btn btn-primary">Sign Up</button>
 </form>
