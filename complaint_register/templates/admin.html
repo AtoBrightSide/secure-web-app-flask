@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Moderator Dashboard</h1>
+<table>
+    <thead>
+        <tr>
+            <th>User ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.user_id }}</td>
+            <td>{{ user.username }}</td>
+            <td>{{ user.email }}</td>
+            <td>
+                {% if user.is_active %}
+                Account Active
+                {% else %}
+                Account Deactivated
+                {% endif %}
+            </td>
+            <td>
+                <form action="{{ url_for('admin_blueprint.toggle_user_status', user_id=user.user_id) }}" method="post">
+                    {{ form.csrf_token }}
+                    {% if user.admin %}
+                    <button type="submit" disabled>Toggle User Status</button>
+                    {% else %}
+                    <button type="submit">Toggle User Status</button>
+                    {% endif %}
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

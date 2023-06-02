@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Submit a Complaint</h2>
+<form method="POST" enctype="multipart/form-data">
+  {{ form.csrf_token }}
+  {{ form.user_id.label }} {{ form.user_id }}<br>
+  {{ form.complaint.label }} {{ form.complaint }}<br>
+  {{ form.file.label }} {{ form.file }}<br>
+  {% if form.errors %}
+  <ul>
+    {% for key, val in form.errors.items() %}
+    <li>{{ " ".join(val) }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  {{ form.captcha.label }} {{ form.captcha }}
+  {% if form.captcha.errors %}
+  <ul class="errors">
+    {% for error in form.captcha.errors %}
+    <li>{{ error }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  <input type="submit" value="Submit">
+</form>
+
+{% if complaints %}
+<div>Complaints made by {{complaints[0].user}}</div>
+<ul>
+  {% for complaint in complaints %}
+  <li>
+    {{complaint.user}} - {{complaint.complaint}}
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}
+{% endblock %}

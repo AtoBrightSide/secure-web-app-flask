@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your App</title>
+    <!-- Include your CSS and JavaScript files -->
+</head>
+
+<body>
+    <!-- Navigation menu -->
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('complaint_blueprint.complaint') }}">Home</a></li>
+            <li><a href="{{ url_for('auth_blueprint.login') }}">Login</a></li>
+            <li><a href="{{ url_for('auth_blueprint.signup') }}">Sign Up</a></li>
+            <li><a href="{{ url_for('auth_blueprint.logout') }}">Logout</a></li>
+        </ul>
+    </nav>
+
+    <!-- Page content -->
+    <div class="container">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul class="flash-messages">
+            {% for message in messages %}
+            <li class="flash-message">{{ message }}</li>
+            {% endfor %}
+        </ul>
+        <script>
+            // Wait for a few seconds and then remove the flash message
+            setTimeout(function () {
+                var flashMessages = document.getElementsByClassName('flash-message');
+                for (var i = 0; i < flashMessages.length; i++) {
+                    flashMessages[i].remove();
+                }
+            }, 3000); // 5000 milliseconds = 5 seconds
+        </script>
+        {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        &copy; {{ current_year }} Your App
+    </footer>
+</body>
+
+</html>
