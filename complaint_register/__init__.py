@@ -12,6 +12,7 @@ db = SQLAlchemy()
 login_manager = LoginManager()
 csrf = CSRFProtect()
 mail = Mail()
+limiter = Limiter(key_func=get_remote_address)
 
 def create_app():
     app = Flask(__name__)
@@ -21,11 +22,10 @@ def create_app():
     csrf.init_app(app)
     login_manager.init_app(app)
     mail.init_app(app)
+    limiter.init_app(app)
 
     login_manager.login_view = 'auth_blueprint.login'
 
-
-    limiter = Limiter(app=app, key_func=get_remote_address)
 
 
     # auth routes
@@ -39,8 +39,13 @@ def create_app():
     app.register_blueprint(complaint_bp)
 
     from .routes.admin import admin_bp
-    # limiter.limit('3/minute')(admin_bp)
+    # limiter.limit('3/30minutes')(admin_bp)
     app.register_blueprint(admin_bp)
+
+    @app.errorhandler(429)
+    def rate_limit_exceeded(e):
+        # Handle rate limit exceeded error
+        return 'Too many requests. Please try again later.', 429
 
     return app
 
