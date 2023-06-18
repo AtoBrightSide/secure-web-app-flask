@@ -2,6 +2,7 @@
 
 {% block content %}
 <h1>Moderator Dashboard</h1>
+<h3>All Users</h3>
 <table class="table">
     <thead>
         <tr>
@@ -33,6 +34,33 @@
                     {% else %}
                     <button class="btn btn-primary" type="submit">Toggle User Status</button>
                     {% endif %}
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<h3>All Complaints</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Complaint ID</th>
+            <th>User</th>
+            <th>Email</th>
+            <th>Complaint</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for complaint in complaints %}
+        <tr>
+            <td>{{ complaint.complaint_id }}</td>
+            <td>{{ complaint.username }}</td>
+            <td>{{ complaint.email }}</td>
+            <td>{{ complaint.complaint }}</td>
+            <td>
+                <form action="{{ url_for('admin_blueprint.admin', complaint_id=complaint.complaint_id) }}"
+                    method="post">
+                    {{ form.csrf_token }}
                 </form>
             </td>
         </tr>
