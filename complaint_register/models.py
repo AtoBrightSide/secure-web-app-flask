@@ -41,6 +41,10 @@ class Complaint(db.Model):
     def todict(self):
         user = User.query.get(self.user_id).todict()
         return {
-            "user": user['username'],
-            "complaint": self.complaint
+            "user_id": self.user_id,
+            "username": user['username'],
+            "email": user['email'],
+            "complaint": self.complaint,
+            "complaint_id": self.complaint_id,
+            "file_path": self.file_path
         }
