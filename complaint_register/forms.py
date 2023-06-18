@@ -1,6 +1,6 @@
 from flask import current_app
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, FileField, SubmitField
+from wtforms import StringField, PasswordField, FileField, SubmitField, HiddenField, TextAreaField
 from wtforms.validators import DataRequired, Email, Length, ValidationError, Regexp
 from flask_wtf.file import FileAllowed
 from flask_wtf.recaptcha import RecaptchaField
@@ -30,11 +30,11 @@ class LoginForm(FlaskForm):
         if user and not user.check_password(field.data):
             raise ValidationError('Invalid credentials!')
 
-
 class RegistrationForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     username = StringField('Username', validators=[DataRequired()])
     honeypot = StringField('HoneyPot')
+    captcha = RecaptchaField()
     password = PasswordField('Password', validators=[DataRequired(), Length(min=6), Regexp(
         r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).*$',
         message="Password must contain at least one uppercase letter, one lowercase letter, and one digit"
@@ -63,15 +63,12 @@ class RegistrationForm(FlaskForm):
         except Exception as e:
             raise Exception(e)
 
-
-
-
-
-from flask_wtf.file import FileAllowed
-
 class ComplaintForm(FlaskForm):
+    complaint_id = HiddenField('Complaint ID')
     user_id = StringField('User ID', render_kw={'readonly': True})
-    complaint = StringField('Comment', validators=[DataRequired()])
+    username = StringField('Name', render_kw={'readonly': True})
+    email = StringField('Email', render_kw={'readonly': True})
+    complaint = TextAreaField('Complaint', validators=[DataRequired()])
     file = FileField(label='File (PDF)', validators=[FileAllowed(['pdf'])])
     captcha = RecaptchaField()
 
@@ -91,13 +88,25 @@ class ComplaintForm(FlaskForm):
                 secure_filename(self.file.data.filename)
             file_path = os.path.join(
                 current_app.config['UPLOAD_FOLDER'], filename)
-            # self.file.data.save(file_path)
+            self.file.data.save(file_path)
             new_complaint.file_path = file_path
 
         db.session.add(new_complaint)
         db.session.commit()
-
-
+    
+    def edit_complaint(self, complaint_id):
+        complaint = Complaint.query.get(complaint_id)
+        
+        complaint.complaint = self.complaint.data
+        if self.file.data:
+            filename = str(uuid.uuid4()) + '_' + \
+                secure_filename(self.file.data.filename)
+            file_path = os.path.join(
+                current_app.config['UPLOAD_FOLDER'], filename)
+            self.file.data.save(file_path)
+            complaint.file_path = file_path
+        
+        db.session.commit()
 
 class DeactivateUserForm(FlaskForm):
     submit = SubmitField('Deactivate')

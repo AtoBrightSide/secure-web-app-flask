@@ -19,20 +19,25 @@
 </style>
 
 <div class="center-content">
-    <h2>Submit a Complaint</h2>
+    <h2>Edit Your Complaint</h2>
     <form method="POST" enctype="multipart/form-data">
         {{ form.csrf_token }}
-        {{ form.user_id.label }} {{ form.user_id }}<br>
+
+        {{ form.hidden_tag() }}
+        {{ form.complaint_id }}
+
         {{ form.username.label }} {{ form.username }}<br>
         {{ form.email.label }} {{ form.email }}<br>
         {{ form.complaint.label }} {{ form.complaint }}<br>
-        {{ form.file.label }} {{ form.file }}<br>
-        {% if form.errors %}
-        <ul>
-            {% for key, val in form.errors.items() %}
-            <li>{{ " ".join(val) }}</li>
-            {% endfor %}
-        </ul>
+        {% if form.file.data %}
+            <div>
+                <strong>Uploaded File:</strong>
+                <p>{{ form.file.data }}</p>
+            </div>
+            <div>
+                <a href="{{ url_for('complaint_blueprint.view_file', complaint_id=form.complaint_id.data) }}">View File</a>
+                <a href="{{ url_for('complaint_blueprint.delete_file', complaint_id=form.complaint_id.data) }}">Delete File</a>
+            </div>
         {% endif %}
         {% if form.captcha %}
         {{ form.captcha.label }} {{ form.captcha }}
@@ -42,20 +47,7 @@
         </ul>
         {% endif %}
         {% endif %}
-        <button class="btn btn-primary" type="submit">Submit</button>
+        <button class="btn btn-primary" type="submit">Edit</button>
     </form>
-
-    {% if complaints %}
-    <div>Complaints made by {{complaints[0].user}}</div>
-    <ul>
-        {% for complaint in complaints %}
-        <li class="">
-            {{complaint.complaint}}
-            <button class="btn"><a
-                    href="{{ url_for('complaint_blueprint.edit', complaint_id=complaint.complaint_id)  }}"><i class="fas fa-edit"></i></a></button>
-        </li>
-        {% endfor %}
-    </ul>
-    {% endif %}
 </div>
 {% endblock %}
