@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -28,24 +28,20 @@ def create_app():
 
 
 
-    # auth routes
+    # auth route
     from .routes.auth import auth_bp
-    # limiter.limit('3 /minute')(auth_bp)
     app.register_blueprint(auth_bp)
 
-
     from .routes.complaint import complaint_bp
-    # limiter.limit('10/hour')(complaint_bp)
     app.register_blueprint(complaint_bp)
 
     from .routes.admin import admin_bp
-    # limiter.limit('3/30minutes')(admin_bp)
     app.register_blueprint(admin_bp)
 
     @app.errorhandler(429)
     def rate_limit_exceeded(e):
         # Handle rate limit exceeded error
-        return 'Too many requests. Please try again later.', 429
+        return render_template('error_page.html', error_message='Too Many Requests...', redirect_url=url_for('complaint_blueprint.complaint')), 429
 
     return app
 
