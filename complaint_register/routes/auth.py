@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, url_for, redirect, flash, request
 from flask_login import login_user, current_user, logout_user
 from werkzeug.security import check_password_hash
 
-from .. import db
+from .. import db, limiter
 from ..models import User
 from ..forms import LoginForm, RegistrationForm
 from ..decorators import moderator_required
@@ -11,6 +11,7 @@ auth_bp = Blueprint('auth_blueprint', __name__)
 
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
+@limiter.limit('5/minute')
 def login():
     form = LoginForm()
     if form.validate_on_submit():
@@ -46,6 +47,7 @@ def verify_email(token):
         return redirect(url_for('auth_blueprint.signup'))
 
 @auth_bp.route('/signup', methods=['GET', 'POST'])
+@limiter.limit('5/minute')
 def signup():
     form = RegistrationForm()
     try:
