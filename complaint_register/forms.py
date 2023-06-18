@@ -73,6 +73,7 @@ class ComplaintForm(FlaskForm):
     user_id = StringField('User ID', render_kw={'readonly': True})
     complaint = StringField('Comment', validators=[DataRequired()])
     file = FileField(label='File (PDF)', validators=[FileAllowed(['pdf'])])
+    captcha = RecaptchaField()
 
     def validate_file(self, file):
         max_size = 5 * 1024 * 1024  # 5 MB
@@ -83,7 +84,6 @@ class ComplaintForm(FlaskForm):
         new_complaint = Complaint(
             user_id=self.user_id.data,
             complaint=self.complaint.data,
-            file_path=self.file.data,
         )
 
         if self.file.data:
